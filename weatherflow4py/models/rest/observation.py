@@ -24,7 +24,6 @@ class Observation:
     brightness: int
 
     dew_point: float
-    feels_like: float
     heat_index: float
 
     pressure_trend: str
@@ -35,13 +34,15 @@ class Observation:
     timestamp: int
     uv: float
 
-    wind_avg: float
-    wind_chill: float
-    wind_direction: int
-    wind_gust: float
-    wind_lull: float
+    # Optional Fields Discovered January 11, 2026
+    feels_like: float | None = None
+    wind_avg: float | None = None
+    wind_chill: float | None = None
+    wind_direction: int | None = None
+    wind_gust: float | None = None
+    wind_lull: float | None = None
 
-    # Optional Fields Discovered June 18
+    # Optional Fields Discovered June 18, 2024
     precip: float | None = None
     air_density: float | None = None
     barometric_pressure: float | None = None
@@ -84,7 +85,7 @@ class Observation:
         return self.precip_minutes_local_yesterday_final
 
     @property
-    def wind_cardinal_direction(self) -> str:
+    def wind_cardinal_direction(self) -> str | None:
         dirs = [
             WindDirection.N,
             WindDirection.NNE,
@@ -103,13 +104,18 @@ class Observation:
             WindDirection.NW,
             WindDirection.NNW,
         ]
+        if self.wind_direction is None:
+            return None
+
         ix = round(self.wind_direction / (360.0 / len(dirs)))
         return dirs[ix % len(dirs)].value
 
     @property
-    def wet_bulb_globe_temperature_category(self) -> int:
+    def wet_bulb_globe_temperature_category(self) -> int | None:
         """Calculates a wet bulb globe temp category - based on wikipedia:
         https://en.wikipedia.org/wiki/Wet-bulb_globe_temperature."""
+        if self.wet_bulb_globe_temperature is None:
+            return None
         if self.wet_bulb_globe_temperature <= 25.6:
             return 0  # No Risk
         if self.wet_bulb_globe_temperature <= 27.7:
@@ -123,7 +129,9 @@ class Observation:
         return 5
 
     @property
-    def wet_bulb_globe_temperature_flag(self) -> WetBulbFlag:
+    def wet_bulb_globe_temperature_flag(self) -> WetBulbFlag | None:
+        if self.wet_bulb_globe_temperature is None:
+            return None
         return WetBulbFlag(self.wet_bulb_globe_temperature_category)
 
     @property

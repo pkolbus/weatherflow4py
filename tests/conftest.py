@@ -103,6 +103,12 @@ def rest_station_observation_no_precip():
         "fixtures/rest/observations/station_id/station_observation_no_precip.json"
     )
 
+@pytest.fixture
+def rest_station_observation_no_wind():
+    return load_fixture(
+        "fixtures/rest/observations/station_id/station_observation_no_wind.json"
+    )
+
 
 @pytest.fixture
 def rest_device_observation_1():
